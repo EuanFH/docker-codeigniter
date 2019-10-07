@@ -3,8 +3,6 @@ FROM php:7.3-apache
 RUN apt-get update && apt-get install -y git-core cron \
   libjpeg-dev libmcrypt-dev libpng-dev libpq-dev libzip-dev \
   && rm -rf /var/lib/apt/lists/* \
-  && pecl install mcrypt-1.0.2 \
-  && docker-php-ext-enable mcrypt \
   && docker-php-ext-configure zip --with-libzip \
   && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
   && docker-php-ext-install gd mysqli opcache pdo pdo_mysql zip
