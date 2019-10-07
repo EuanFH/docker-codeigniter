@@ -1,10 +1,13 @@
-FROM php:5.6-apache
+FROM php:7.3-apache
 
 RUN apt-get update && apt-get install -y git-core cron \
-  libjpeg-dev libmcrypt-dev libpng-dev libpq-dev \
+  libjpeg-dev libmcrypt-dev libpng-dev libpq-dev libzip-dev \
   && rm -rf /var/lib/apt/lists/* \
+  && pecl install mcrypt-1.0.2 \
+  && docker-php-ext-enable mcrypt \
+  && docker-php-ext-configure zip --with-libzip \
   && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-  && docker-php-ext-install gd mcrypt mysqli opcache pdo pdo_mysql zip
+  && docker-php-ext-install gd mysqli opcache pdo pdo_mysql zip
 
 # Recommended opcache settings - https://secure.php.net/manual/en/opcache.installation.php
 RUN { \
@@ -40,9 +43,9 @@ RUN a2enconf docker-ci-php
 
 RUN a2enmod rewrite
 
-COPY --chown=www-data:www-data ./CodeIgniter_1.7.3 /usr/src/CodeIgniter_1.7.3
+COPY --chown=www-data:www-data ./CodeIgniter-3.1.11 /usr/src/CodeIgniter-3.1.11
 
-RUN ln -s /usr/src/CodeIgniter_1.7.3/system /var/www/codeigniter
+RUN ln -s /usr/src/CodeIgniter-3.1.11/* /var/www/html/
 
 COPY docker-entrypoint /usr/local/bin/
 
